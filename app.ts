@@ -34,6 +34,7 @@ app.post("/users", (req, res) => {
   const isExistingUser = users.findIndex(_user => _user.id === user.id) > -1;
   if (isExistingUser) {
     res.json({ message: `'${user.id}' is already exist.` });
+    return;
   }
 
   users.push(user);
@@ -48,6 +49,7 @@ app.put("/users/:id", (req, res) => {
   const index = users.findIndex(user => user.id === userID);
   if (index === -1) {
     res.json({ message: `'${userID}' is not exist.` });
+    return;
   }
 
   users[index] = newUser;
@@ -61,6 +63,7 @@ app.delete("/users/:id", (req, res) => {
   const index = users.findIndex(user => user.id === userID);
   if (index === -1) {
     res.json({ message: `'${userID}' is not exist.` });
+    return;
   }
 
   users.splice(index, 1);
