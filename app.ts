@@ -31,6 +31,11 @@ app.get("/users/:id", (req, res) => {
 app.post("/users", (req, res) => {
   const user = req.body;
 
+  const isExistingUser = users.findIndex(_user => _user.id === user.id) > -1;
+  if (isExistingUser) {
+    res.json({ message: `'${user.id}' is already exist.` });
+  }
+
   users.push(user);
 
   res.json(users);
