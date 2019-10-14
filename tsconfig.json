@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "experimentalDecorators": true,
+    "importHelpers": true,
     "noEmit": true,
     "skipLibCheck": true,
     "strict": true,
