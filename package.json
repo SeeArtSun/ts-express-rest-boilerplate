@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
+    "build:watch": "npm run build -- --watch",
     "prestart": "npm run build",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "start:dev": "npm run build && pm2-dev start development.json"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,7 @@
   "homepage": "https://github.com/SeeArtSun/ts-express-rest-boilerplate#readme",
   "devDependencies": {
     "@types/express": "^4.17.1",
+    "pm2": "^4.0.1",
     "tslib": "^1.10.0",
     "typescript": "^3.6.4"
   },

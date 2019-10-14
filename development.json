@@ -1,0 +1,13 @@
+{
+  "apps": [
+    {
+      "name": "ts-express-rest-api",
+      "script": "dist/app.js",
+      "watch": ["dist"],
+      "env": {
+        "NODE_ENV": "development",
+        "PORT": 8000
+      }
+    }
+  ]
+}
