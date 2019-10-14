@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/SeeArtSun/ts-express-rest-boilerplate/issues"
   },
-  "homepage": "https://github.com/SeeArtSun/ts-express-rest-boilerplate#readme"
+  "homepage": "https://github.com/SeeArtSun/ts-express-rest-boilerplate#readme",
+  "devDependencies": {
+    "typescript": "^3.6.4"
+  }
 }
