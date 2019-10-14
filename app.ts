@@ -55,4 +55,17 @@ app.put("/users/:id", (req, res) => {
   res.json(users);
 });
 
+app.delete("/users/:id", (req, res) => {
+  const userID = req.params.id;
+
+  const index = users.findIndex(user => user.id === userID);
+  if (index === -1) {
+    res.json({ message: `'${userID}' is not exist.` });
+  }
+
+  users.splice(index, 1);
+
+  res.json(users);
+});
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
