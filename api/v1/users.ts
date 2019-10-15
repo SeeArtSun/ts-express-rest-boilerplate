@@ -35,15 +35,16 @@ router.post("/users", (req, res) => {
 
 router.put("/users/:id", (req, res) => {
   const userID = req.params.id;
-  const newUser = req.body;
+  const newUser = { ...req.body, id: userID };
 
   const index = users.findIndex(user => user.id === userID);
-  if (index === -1) {
-    res.json({ message: `'${userID}' is not exist.` });
-    return;
-  }
+  const isExistingUser = index > -1;
 
-  users[index] = newUser;
+  if (isExistingUser) {
+    users[index] = newUser;
+  } else {
+    users.push(newUser);
+  }
 
   res.json(users);
 });
