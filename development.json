@@ -7,7 +7,12 @@
       "env": {
         "NODE_ENV": "development",
         "PORT": 8000,
-        "JWT_SECRET_KEY": "sun"
+        "JWT_SECRET_KEY": "sun",
+        "MYSQL_HOST": "localhost",
+        "MYSQL_USER": "test",
+        "MYSQL_PASSWORD": "test",
+        "MYSQL_PORT": 3306,
+        "MYSQL_DATABASE": "test"
       }
     }
   ]

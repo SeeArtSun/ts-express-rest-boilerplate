@@ -12,7 +12,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 const router = express.Router();
 app.use("/api/v1", router);
-router.use(authorization);
+/**
+ * MiddleWare for jwt Authorization
+ */
+// router.use(authorization);
 router.use(users);
 
 app.get("/", (_, res) => {
