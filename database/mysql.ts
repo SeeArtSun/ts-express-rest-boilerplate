@@ -1,5 +1,15 @@
 import mysql, { Pool, PoolConnection } from "mysql";
 
+interface DMLResult {
+  fieldCount: number;
+  affectedRows: number;
+  insertId: number;
+  serverStatus: number;
+  warningCount: number;
+  message: string;
+  protocol41: boolean;
+  changedRows: number;
+}
 class MyPool {
   public pool: Pool;
 
@@ -40,3 +50,4 @@ class MyPool {
 }
 
 export default MyPool;
+export { DMLResult };

@@ -2,7 +2,7 @@ import express from "express";
 import uuid from "uuid/v4";
 
 import users from "./users.json";
-import MyPool from "../../database/mysql";
+import MyPool, { DMLResult } from "../../database/mysql";
 
 interface User {
   id: string;
@@ -65,21 +65,40 @@ router.get("/users/:id", async (req, res) => {
   res.json(respone);
 });
 
-router.post("/users", (req, res) => {
-  const user = { ...req.body, id: uuid() };
+router.post("/users", async (req, res) => {
+  const user = req.body;
+  const connection = await myPool.getConnection();
 
-  const isExistingUser =
-    users.findIndex(
-      _user => _user.phonenumber && _user.phonenumber === user.phonenumber
-    ) > -1;
-  if (isExistingUser) {
-    res.json({ message: `'${user.name}' is already exist.` });
-    return;
+  user.id = user.id || uuid();
+  const columns = Object.keys(user).join(", ");
+  const values = Object.values(user)
+    .map(value => `'${value}'`)
+    .join(", ");
+
+  const insertQueryString = `
+    INSERT INTO user (${columns})
+      VALUES (${values})
+    ;
+  `;
+
+  try {
+    const queryResult = (await myPool.query(
+      connection,
+      insertQueryString
+    )) as DMLResult;
+
+    if (queryResult.affectedRows) {
+      const respone: Result = { message: "Success", item: user };
+      res.json(respone);
+    } else {
+      const respone: Result = { message: "Failed", item: user };
+      res.json(respone);
+    }
+  } catch (error) {
+    res.json({ message: `[Failed] ${error.message}`, item: user });
+  } finally {
+    connection.release();
   }
-
-  users.push(user);
-
-  res.json(users);
 });
 
 router.put("/users/:id", (req, res) => {
