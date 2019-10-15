@@ -4,6 +4,7 @@ import express from "express";
 import users from "./api/v1/users";
 import authorization from "./api/v1/authorization";
 import db from "./database/connection";
+import query from "./database/query";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -34,14 +35,12 @@ app.get("/", async (_, res) => {
     );
   `;
 
-  db.query(createUserTableQueryString, (err, result) => {
-    if (err) {
-      console.warn(err);
-    }
+  try {
+    const result = await query(db, createUserTableQueryString);
     console.log(result);
-
-    return result;
-  });
+  } catch (error) {
+    console.error(error.message);
+  }
 
   res.sendStatus(200);
 });
