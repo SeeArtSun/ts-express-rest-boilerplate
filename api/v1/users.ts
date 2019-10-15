@@ -4,6 +4,19 @@ import uuid from "uuid/v4";
 import users from "./users.json";
 import MyPool from "../../database/mysql";
 
+interface User {
+  id: string;
+  name: string;
+  birthday?: string;
+  phonenumber?: string;
+  status: "verified" | "guest" | "leaved";
+}
+interface Result {
+  message: string;
+  items?: User[];
+  item?: User;
+}
+
 const router = express.Router();
 const myPool = new MyPool();
 
@@ -15,11 +28,15 @@ router.get("/users", async (_, res) => {
       FROM user
     ;
   `;
-  const queryResult = await myPool.query(connection, getUsersQueryString);
+  const queryResult = (await myPool.query(
+    connection,
+    getUsersQueryString
+  )) as User[];
 
   connection.release();
 
-  res.json(queryResult);
+  const respone: Result = { message: "Success", items: queryResult };
+  res.json(respone);
 });
 
 router.get("/users/:id", (req, res) => {
