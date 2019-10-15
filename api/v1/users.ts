@@ -1,7 +1,6 @@
 import express from "express";
 import uuid from "uuid/v4";
 
-import users from "./users.json";
 import MyPool, { DMLResult, ShowColumnsResult } from "../../database/mysql";
 
 interface User {
