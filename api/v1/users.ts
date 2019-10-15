@@ -117,34 +117,77 @@ router.put("/users/:id", (req, res) => {
   res.json(users);
 });
 
-router.patch("/users/:id", (req, res) => {
+router.patch("/users/:id", async (req, res) => {
   const userID = req.params.id;
   const query = req.query;
 
-  const index = users.findIndex(user => user.id === userID);
+  const setValues = Object.keys(query)
+    .map(columnName => {
+      return `${columnName} = ${
+        typeof query[columnName] === "number"
+          ? query[columnName]
+          : `'${query[columnName]}'`
+      }`;
+    })
+    .join(", ");
+  const updateQueryString = `
+    UPDATE user SET ${setValues}
+     WHERE id = '${userID}';
+  `;
 
-  if (index === -1) {
-    res.json({ message: `'${userID}' is not exist.` });
-    return;
+  const connection = await myPool.getConnection();
+  const updataeResult = (await myPool.query(
+    connection,
+    updateQueryString
+  )) as DMLResult;
+
+  const respone: Result = { message: "[Failed] not exist matched user" };
+
+  if (updataeResult.affectedRows) {
+    const getUserQueryString = `
+      SELECT *
+        FROM user
+       WHERE id = '${userID}';
+  `;
+    const queryResult = (await myPool.query(
+      connection,
+      getUserQueryString
+    )) as User[];
+
+    respone.message = `[Success]: ${updataeResult.message}`;
+    respone.item = queryResult[0];
   }
 
-  users[index] = { ...users[index], ...query };
-
-  res.json(users[index]);
+  connection.release();
+  res.json(respone);
 });
 
-router.delete("/users/:id", (req, res) => {
+router.delete("/users/:id", async (req, res) => {
   const userID = req.params.id;
+  const connection = await myPool.getConnection();
 
-  const index = users.findIndex(user => user.id === userID);
-  if (index === -1) {
-    res.json({ message: `'${userID}' is not exist.` });
-    return;
+  const deleteQueryString = `
+    DELETE FROM user
+     WHERE id = '${userID}';
+  `;
+
+  try {
+    const queryResult = (await myPool.query(
+      connection,
+      deleteQueryString
+    )) as DMLResult;
+
+    const response: Result = {
+      message: queryResult.affectedRows
+        ? "Success"
+        : "[Failed] not exist matched user"
+    };
+    res.json(response);
+  } catch (error) {
+    res.json({ message: `[Failed] ${error.message}` });
+  } finally {
+    connection.release();
   }
-
-  users.splice(index, 1);
-
-  res.json(users);
 });
 
 export default router;
