@@ -2,7 +2,7 @@ import express from "express";
 import uuid from "uuid/v4";
 
 import users from "./users.json";
-import MyPool, { DMLResult } from "../../database/mysql";
+import MyPool, { DMLResult, ShowColumnsResult } from "../../database/mysql";
 
 interface User {
   id: string;
@@ -101,20 +101,63 @@ router.post("/users", async (req, res) => {
   }
 });
 
-router.put("/users/:id", (req, res) => {
+router.put("/users/:id", async (req, res) => {
   const userID = req.params.id;
   const newUser = { ...req.body, id: userID };
 
-  const index = users.findIndex(user => user.id === userID);
-  const isExistingUser = index > -1;
+  const getColumnNamesQueryString = `
+    SHOW columns FROM user;
+  `;
+  const connection = await myPool.getConnection();
 
-  if (isExistingUser) {
-    users[index] = newUser;
-  } else {
-    users.push(newUser);
+  try {
+    const getColumnsResult = (await myPool.query(
+      connection,
+      getColumnNamesQueryString
+    )) as ShowColumnsResult;
+
+    const columnNames = getColumnsResult.map(_column => _column.Field);
+    const values = columnNames.map(_columnName => {
+      const value = newUser[_columnName] ? `'${newUser[_columnName]}'` : "null";
+
+      return value;
+    });
+    const inDupCase = columnNames
+      .map(_columnName => {
+        const value = newUser[_columnName]
+          ? `'${newUser[_columnName]}'`
+          : "null";
+
+        return `${_columnName} = ${value}`;
+      })
+      .join(", ");
+
+    const upsertQueryString = `
+      INSERT INTO user (${columnNames.join(", ")})
+        VALUES (${values.join(", ")})
+      ON DUPLICATE KEY UPDATE
+        ${inDupCase}
+    `;
+    await myPool.query(connection, upsertQueryString);
+
+    const getUserQueryString = `
+      SELECT *
+        FROM user
+       WHERE id = '${userID}';
+    `;
+    const queryResult = (await myPool.query(
+      connection,
+      getUserQueryString
+    )) as User[];
+
+    const respone: Result = { message: "Success", item: queryResult[0] };
+
+    res.json(respone);
+  } catch (error) {
+    res.json({ message: `[Failed] ${error.message}`, item: newUser });
+  } finally {
+    connection.release();
   }
-
-  res.json(users);
 });
 
 router.patch("/users/:id", async (req, res) => {

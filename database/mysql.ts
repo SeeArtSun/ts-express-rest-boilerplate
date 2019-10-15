@@ -10,6 +10,16 @@ interface DMLResult {
   protocol41: boolean;
   changedRows: number;
 }
+interface ShowColumnsItem {
+  Field: string;
+  Type: string;
+  Null: string;
+  Key: string;
+  Default: string | null;
+  Extra: string;
+}
+type ShowColumnsResult = ShowColumnsItem[];
+
 class MyPool {
   public pool: Pool;
 
@@ -50,4 +60,4 @@ class MyPool {
 }
 
 export default MyPool;
-export { DMLResult };
+export { DMLResult, ShowColumnsResult, ShowColumnsItem };
