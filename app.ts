@@ -1,7 +1,17 @@
+import bodyParser from "body-parser";
 import express from "express";
+
+import users from "./api/v1/users";
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+const router = express.Router();
+app.use("/api/v1", router);
+router.use(users);
 
 app.get("/", (_, res) => {
   res.sendStatus(200);

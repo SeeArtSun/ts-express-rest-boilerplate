@@ -1,0 +1,14 @@
+[
+  {
+    "id": "user-01",
+    "name": "sunmi",
+    "birthday": "880518",
+    "status": "verified"
+  },
+  {
+    "id": "user-02",
+    "name": "minjin",
+    "birthday": "860225",
+    "status": "guest"
+  }
+]
