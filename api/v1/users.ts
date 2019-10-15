@@ -2,11 +2,24 @@ import express from "express";
 import uuid from "uuid/v4";
 
 import users from "./users.json";
+import MyPool from "../../database/mysql";
 
 const router = express.Router();
+const myPool = new MyPool();
 
-router.get("/users", (_, res) => {
-  res.json(users);
+router.get("/users", async (_, res) => {
+  const connection = await myPool.getConnection();
+
+  const getUsersQueryString = `
+    SELECT *
+      FROM user
+    ;
+  `;
+  const queryResult = await myPool.query(connection, getUsersQueryString);
+
+  connection.release();
+
+  res.json(queryResult);
 });
 
 router.get("/users/:id", (req, res) => {
