@@ -86,13 +86,11 @@ router.post("/users", async (req, res) => {
       insertQueryString
     )) as DMLResult;
 
-    if (queryResult.affectedRows) {
-      const respone: Result = { message: "Success", item: user };
-      res.json(respone);
-    } else {
-      const respone: Result = { message: "Failed", item: user };
-      res.json(respone);
-    }
+    const respone: Result = {
+      message: queryResult.affectedRows ? "Success" : "Failed",
+      item: user
+    };
+    res.json(respone);
   } catch (error) {
     res.json({ message: `[Failed] ${error.message}`, item: user });
   } finally {
