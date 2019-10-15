@@ -6,7 +6,8 @@
       "watch": ["dist"],
       "env": {
         "NODE_ENV": "development",
-        "PORT": 8000
+        "PORT": 8000,
+        "JWT_SECRET_KEY": "sun"
       }
     }
   ]
