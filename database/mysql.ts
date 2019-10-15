@@ -1,27 +1,42 @@
-import { Pool, PoolConnection } from "mysql";
+import mysql, { Pool, PoolConnection } from "mysql";
 
-const getConnection = (pool: Pool): Promise<PoolConnection> => {
-  return new Promise((resolve, reject) => {
-    pool.getConnection((err, connection) => {
-      if (err) {
-        return reject(err);
-      }
+class MyPool {
+  public pool: Pool;
 
-      resolve(connection);
+  constructor() {
+    this.pool = mysql.createPool({
+      host: process.env.MYSQL_HOST,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      port: Number(process.env.MYSQL_PORT),
+      database: process.env.MYSQL_DATABASE,
+      connectionLimit: 10
     });
-  });
-};
+  }
 
-const query = (connection: PoolConnection, sql: string) => {
-  return new Promise((resolve, reject) => {
-    connection.query(sql, (err, rows) => {
-      if (err) {
-        return reject(err);
-      }
+  public getConnection = (): Promise<PoolConnection> => {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          return reject(err);
+        }
 
-      resolve(rows);
+        resolve(connection);
+      });
     });
-  });
-};
+  };
 
-export { getConnection, query };
+  public query = (connection: PoolConnection, sql: string) => {
+    return new Promise((resolve, reject) => {
+      connection.query(sql, (err, rows) => {
+        if (err) {
+          return reject(err);
+        }
+
+        resolve(rows);
+      });
+    });
+  };
+}
+
+export default MyPool;
