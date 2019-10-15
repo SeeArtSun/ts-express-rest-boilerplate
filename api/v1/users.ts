@@ -53,6 +53,22 @@ router.put("/users/:id", (req, res) => {
   res.json(users);
 });
 
+router.patch("/users/:id", (req, res) => {
+  const userID = req.params.id;
+  const query = req.query;
+
+  const index = users.findIndex(user => user.id === userID);
+
+  if (index === -1) {
+    res.json({ message: `'${userID}' is not exist.` });
+    return;
+  }
+
+  users[index] = { ...users[index], ...query };
+
+  res.json(users[index]);
+});
+
 router.delete("/users/:id", (req, res) => {
   const userID = req.params.id;
 
