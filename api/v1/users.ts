@@ -1,4 +1,5 @@
 import express from "express";
+import uuid from "uuid/v4";
 
 import users from "./users.json";
 
@@ -20,11 +21,14 @@ router.get("/users/:id", (req, res) => {
 });
 
 router.post("/users", (req, res) => {
-  const user = req.body;
+  const user = { ...req.body, id: uuid() };
 
-  const isExistingUser = users.findIndex(_user => _user.id === user.id) > -1;
+  const isExistingUser =
+    users.findIndex(
+      _user => _user.phonenumber && _user.phonenumber === user.phonenumber
+    ) > -1;
   if (isExistingUser) {
-    res.json({ message: `'${user.id}' is already exist.` });
+    res.json({ message: `'${user.name}' is already exist.` });
     return;
   }
 
