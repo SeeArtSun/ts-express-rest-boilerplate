@@ -18,7 +18,7 @@ app.use("/api/v1", router);
 // router.use(authorization);
 router.use(users);
 
-app.get("/", async (_, res) => {
+app.get("/", (_, res) => {
   res.sendStatus(200);
 });
 
