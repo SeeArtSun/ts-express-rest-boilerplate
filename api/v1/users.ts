@@ -39,15 +39,30 @@ router.get("/users", async (_, res) => {
   res.json(respone);
 });
 
-router.get("/users/:id", (req, res) => {
+router.get("/users/:id", async (req, res) => {
   const userID = req.params.id;
-  const user = users.find(user => user.id === userID);
+  const connection = await myPool.getConnection();
 
-  if (!user) {
+  const getUserQueryString = `
+    SELECT *
+      FROM user
+     WHERE id = '${userID}'
+    ;
+  `;
+  const queryResult = (await myPool.query(
+    connection,
+    getUserQueryString
+  )) as User[];
+
+  connection.release();
+
+  if (!queryResult.length) {
     res.json({ message: `'${userID}' is not exist.` });
+    return;
   }
 
-  res.json(user);
+  const respone: Result = { message: "Success", item: queryResult[0] };
+  res.json(respone);
 });
 
 router.post("/users", (req, res) => {
