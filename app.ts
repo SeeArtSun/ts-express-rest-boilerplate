@@ -30,6 +30,21 @@ const io = SocketIO(server);
 io.on("connection", socket => {
   console.warn("connected!", socket.id);
 
+  socket.on("subscribe", (payload: { userID: string; channel: string }) => {
+    socket.join(payload.channel);
+
+    console.log(`${payload.userID} subscribe ${payload.channel}`);
+  });
+
+  socket.on("joinChatRoom", (payload: { userID: string; channel: string }) => {
+    socket.join(payload.channel);
+
+    socket.broadcast.emit("sendMessage", {
+      channel: payload.channel,
+      message: `enter the '${payload.userID}'`
+    });
+  });
+
   socket.on("disconnect", function() {
     console.log("disconnected!", socket.id);
   });
