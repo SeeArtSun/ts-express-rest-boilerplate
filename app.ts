@@ -45,6 +45,15 @@ io.on("connection", socket => {
     });
   });
 
+  socket.on(
+    "sendMessage",
+    (payload: { chatRoomID: string; message: string; senderID?: string }) => {
+      const { chatRoomID } = payload;
+
+      io.sockets.in(chatRoomID).emit("sendMessage", payload);
+    }
+  );
+
   socket.on("disconnect", function() {
     console.log("disconnected!", socket.id);
   });
