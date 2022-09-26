@@ -27,7 +27,7 @@
     "@types/jsonwebtoken": "^8.3.4",
     "@types/mysql": "^2.15.7",
     "@types/uuid": "^3.4.5",
-    "pm2": "^4.0.1",
+    "pm2": "^5.2.0",
     "tslib": "^1.10.0",
     "typescript": "^3.6.4",
     "uuid": "^3.3.3"
